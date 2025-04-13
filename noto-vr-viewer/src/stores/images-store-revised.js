@@ -31,7 +31,7 @@ const predefinedImages = [
     name: '市役所',
     type: 'panorama',
     url: 'images/city-office.jpg',
-    thumbnail: 'images/thumbnails/city-office-thub.png',
+    thumbnail: 'images/thumbnails/city-office-thum.png',
     description: '桜と輪島市役所のパノラマ'
   },
   {

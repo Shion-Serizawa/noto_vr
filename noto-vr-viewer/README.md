@@ -77,5 +77,4 @@ chmod +x deploy.sh
 - [A-Frame](https://aframe.io/) - WebVRフレームワーク
 
 ## ライセンス
-
-MIT
+一旦、他の人が勝手に使ってはいけないことにする
