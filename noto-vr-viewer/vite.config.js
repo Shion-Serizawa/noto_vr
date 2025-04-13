@@ -4,7 +4,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 // GitHub Pagesでのデプロイ時に使用する正しいベースパス
 // リポジトリ名がプロジェクト名と同じ場合、'/360-viewer/'を使用します
 // もしルートドメインを使用する場合は、'/'を設定します
-const base = process.env.NODE_ENV === 'production' ? '/360-viewer/' : '/'
+const base = process.env.NODE_ENV === 'production' ? '/noto_vr/' : '/' // Set base path according to repository name
 
 // https://vitejs.dev/config/
 export default defineConfig({
