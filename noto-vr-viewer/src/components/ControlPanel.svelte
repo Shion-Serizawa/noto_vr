@@ -24,7 +24,8 @@
     }
 </script>
 
-<div class="control-panel">
+{#if deviceCapabilities?.isMobile || vrAvailable}
+<div class="control-panel" on:click|stopPropagation>
     <div class="panel-section">
         <!-- デバイスに応じたコントロールモード切替 -->
         {#if deviceCapabilities.isMobile}
@@ -36,7 +37,7 @@
                             class="control-btn {controlMode === 'orientation'
                                 ? 'active'
                                 : ''}"
-                            on:click={() => setControlMode("orientation")}
+                            on:click|stopPropagation={() => setControlMode("orientation")}
                         >
                             デバイス向き
                         </button>
@@ -46,7 +47,7 @@
                         class="control-btn {controlMode === 'touch'
                             ? 'active'
                             : ''}"
-                        on:click={() => setControlMode("touch")}
+                        on:click|stopPropagation={() => setControlMode("touch")}
                     >
                         タッチ操作
                     </button>
@@ -57,14 +58,14 @@
         <!-- VRモード切替ボタン（VR対応デバイスのみ表示） -->
         {#if vrAvailable}
             <div class="vr-mode-group">
-                <button class="vr-btn" on:click={toggleVR}>
+                <button class="vr-btn" on:click|stopPropagation={toggleVR}>
                     VRモード開始
                 </button>
             </div>
         {/if}
     </div>
 </div>
-
+{/if}
 <style>
     .control-panel {
         position: absolute;

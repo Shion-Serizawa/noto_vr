@@ -22,8 +22,8 @@
     }
 </script>
 
-<div class="image-selector {isOpen ? 'open' : ''}">
-    <button class="selector-toggle" on:click={toggleSelector}>
+<div class="image-selector {isOpen ? 'open' : ''}" on:click|stopPropagation>
+    <button class="selector-toggle" on:click|stopPropagation={toggleSelector}>
         {isOpen ? "閉じる" : "画像選択"}
         <span class="chevron">{isOpen ? "▲" : "▼"}</span>
     </button>
@@ -36,7 +36,7 @@
             {#each images as image (image.id)}
                 <div
                     class="thumbnail-item {selected && selected.id === image.id ? 'selected' : ''}"
-                    on:click={() => selectImage(image)}
+                    on:click|stopPropagation={() => selectImage(image)}
                     role="button"
                     tabindex="0"
                     on:keydown={(e) => e.key === "Enter" && selectImage(image)}

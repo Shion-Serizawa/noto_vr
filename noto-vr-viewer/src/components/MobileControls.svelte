@@ -35,8 +35,8 @@
     }
 </script>
 
-<div class="mobile-controls">
-    <button class="control-toggle" on:click={toggleControlMode}>
+<div class="mobile-controls" on:click|stopPropagation>
+    <button class="control-toggle" on:click|stopPropagation={toggleControlMode}>
         <span class="icon">{controlMode === "orientation" ? "📱" : "👆"}</span>
         <span class="label">
             {controlMode === "orientation"

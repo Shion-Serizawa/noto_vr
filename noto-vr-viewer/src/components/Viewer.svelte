@@ -1,10 +1,16 @@
-<script>
-    // @ts-ignore
+<script lang="ts">
     import { onMount, onDestroy, afterUpdate } from "svelte";
     import { createEventDispatcher } from "svelte";
 
+    // 画像の型定義
+    interface ImageType {
+        url: string;
+        type?: 'equirectangular' | 'panorama'; // 画像タイプを追加
+        [key: string]: any; // その他のプロパティがある場合
+    }
+
     // props
-    export let image = null;
+    export let image: ImageType | null = null;
     export let vrMode = false;
     export let controlMode = "mouse"; // 'mouse', 'orientation', 'touch'
 
@@ -13,6 +19,7 @@
     let camera;
     let orientationControls = false;
     let orientationHandler = null;
+    let panoramaEntity = null;
 
     // A-Frameコンポーネントの初期化
     onMount(() => {
@@ -22,6 +29,29 @@
                 init: function () {
                     this.el.setAttribute("rotation", "0 0 0");
                 },
+            });
+            
+            // パノラマ用のカスタムコンポーネント（水平方向のみの回転に制限）
+            window.AFRAME.registerComponent("panorama-rotation", {
+                schema: {
+                    enabled: { default: true }
+                },
+                init: function() {
+                    this.originalPitch = 0;
+                    
+                    // look-controlsコンポーネントが利用可能になるまで少し待つ
+                    setTimeout(() => {
+                        if (this.el.components["look-controls"]) {
+                            this.originalPitch = this.el.components["look-controls"].pitchObject.rotation.x;
+                        }
+                    }, 100);
+                },
+                tick: function() {
+                    if (this.data.enabled && this.el.components["look-controls"]) {
+                        // Y軸（上下）の回転を制限
+                        this.el.components["look-controls"].pitchObject.rotation.x = this.originalPitch;
+                    }
+                }
             });
         }
 
@@ -42,7 +72,7 @@
     // 画像やコントロールモードが変わったときに更新
     afterUpdate(() => {
         setupControls();
-        updateSky();
+        updateView();
     });
 
     // コントロールの設定
@@ -61,6 +91,13 @@
         } else {
             // デフォルトはマウスコントロール
             enableMouseControls();
+        }
+        
+        // パノラマの場合、上下の回転を制限する
+        if (camera && image?.type === 'panorama') {
+            camera.setAttribute("panorama-rotation", "enabled: true");
+        } else if (camera) {
+            camera.setAttribute("panorama-rotation", "enabled: false");
         }
     }
 
@@ -154,32 +191,127 @@
         let x = beta ? beta : 0;
         let y = alpha ? alpha : 0;
         let z = gamma ? gamma : 0;
+        
+        // パノラマタイプの場合は上下の視点移動を制限
+        if (image && image.type === 'panorama') {
+            x = 0; // X軸（上下）の回転を0に固定
+        }
 
         // 初期の向きからのオフセットを考慮（実装により調整が必要）
         camera.setAttribute("rotation", { x, y, z });
     }
 
-    // 360度画像の更新
-    function updateSky() {
-        if (!image || !scene) return;
+    // ビューの更新（画像タイプに応じた処理）
+    function updateView() {
+        if (!image || !scene) {
+            console.log("updateView: image or scene is null", { image, scene });
+            return;
+        }
 
-        const sky = scene.querySelector("a-sky");
-        if (sky && image.url) {
-            sky.setAttribute("src", image.url);
+        // 既存のスカイとパノラマエンティティを削除
+        clearCurrentView();
+        
+        // 画像タイプに応じて表示方法を変更
+        const imageType = image.type || 'equirectangular'; // デフォルトは全天球
+        
+        if (imageType === 'equirectangular') {
+            // 全天球画像はa-skyを使用
+            console.log("Setting up equirectangular view with:", image.url);
+            const sky = document.createElement('a-sky');
+            sky.setAttribute('id', 'sky-entity');
+            sky.setAttribute('src', '#skyTexture');
+            sky.setAttribute('rotation', '0 -90 0');
+            scene.appendChild(sky);
+            
+            // カメラの制限を解除
+            if (camera) {
+                camera.setAttribute('panorama-rotation', 'enabled: false');
+            }
+        } else if (imageType === 'panorama') {
+            // パノラマ画像は円筒形に表示
+            console.log("Setting up panorama view with:", image.url);
+            panoramaEntity = document.createElement('a-entity');
+            panoramaEntity.setAttribute('id', 'panorama-entity');
+            
+            // 円筒形のジオメトリを設定
+            panoramaEntity.setAttribute('geometry', {
+                primitive: 'cylinder',
+                radius: 5,
+                height: 6,
+                openEnded: true,
+                thetaLength: 360,
+                thetaStart: 0,
+                segmentsRadial: 36
+            });
+            
+            // テクスチャを内側に表示
+            panoramaEntity.setAttribute('material', {
+                src: '#skyTexture',
+                shader: 'flat',
+                side: 'back',
+                repeat: '-1 1'
+            });
+            panoramaEntity.setAttribute('rotation', '0 180 0');
+            
+            // 位置調整
+            panoramaEntity.setAttribute('position', '0 1.6 0');
+            scene.appendChild(panoramaEntity);
+            
+            // カメラの上下回転を制限
+            if (camera) {
+                camera.setAttribute('panorama-rotation', 'enabled: true');
+            }
+        }
+    }
+    
+    // 現在のビューをクリア
+    function clearCurrentView() {
+        // 既存のスカイを削除
+        const existingSky = scene.querySelector('#sky-entity');
+        if (existingSky) {
+            existingSky.parentNode.removeChild(existingSky);
+        }
+        
+        // 既存のパノラマエンティティを削除
+        const existingPanorama = scene.querySelector('#panorama-entity');
+        if (existingPanorama) {
+            existingPanorama.parentNode.removeChild(existingPanorama);
         }
     }
 
-    // カメラリセット
-    function resetCamera() {
+    // 外部から呼び出せるメソッド
+    export function resetCamera() {
+        console.log("resetCamera called", { camera });
         if (camera) {
+            // look-controlsコンポーネントを取得
+            const lookControls = camera.components["look-controls"];
+            
+            if (lookControls) {
+                // look-controlsの内部状態をリセット
+                if (lookControls.pitchObject) lookControls.pitchObject.rotation.x = 0;
+                if (lookControls.yawObject) lookControls.yawObject.rotation.y = 0;
+            }
+            
+            // カメラの回転属性を直接設定
             camera.setAttribute("rotation", "0 0 0");
+            console.log("Camera rotation reset to 0 0 0");
+            
+            // オリエンテーションコントロールの場合も対応
+            if (orientationControls && orientationHandler) {
+                // オリエンテーションコントロールを一時的に無効化して再設定
+                window.removeEventListener("deviceorientation", orientationHandler);
+                setTimeout(() => {
+                    window.addEventListener("deviceorientation", orientationHandler);
+                }, 100);
+            }
         }
     }
 
-    // VRモード開始
-    function enterVR() {
+    export function enterVR() {
+        console.log("enterVR called", { scene });
         if (scene) {
             scene.enterVR();
+            console.log("Entered VR mode");
         }
     }
 
@@ -218,10 +350,7 @@
         >
         </a-entity>
 
-        <!-- 360度画像の表示 -->
-        {#if image}
-            <a-sky src="#skyTexture" rotation="0 -90 0"></a-sky>
-        {/if}
+        <!-- 画像コンテンツはJavaScriptで動的に生成 -->
     </a-scene>
 
     <!-- オーバーレイUI（VRモード以外で表示） -->
@@ -234,6 +363,12 @@
             {#if controlMode === "orientation"}
                 <div class="orientation-message">
                     デバイスを動かして周囲を見回せます
+                </div>
+            {/if}
+            
+            {#if image && image.type}
+                <div class="image-type-badge">
+                    {image.type === 'equirectangular' ? '360°全天球' : 'パノラマ'}
                 </div>
             {/if}
         </div>
@@ -259,6 +394,10 @@
         top: 20px;
         right: 20px;
         z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
     }
 
     .reset-btn {
@@ -281,9 +420,17 @@
         color: white;
         padding: 10px;
         border-radius: 5px;
-        margin-top: 10px;
         font-size: 14px;
         pointer-events: none;
+        backdrop-filter: blur(2px);
+    }
+    
+    .image-type-badge {
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
         backdrop-filter: blur(2px);
     }
 

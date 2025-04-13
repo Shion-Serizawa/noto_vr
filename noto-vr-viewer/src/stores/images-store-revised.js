@@ -46,6 +46,29 @@ const predefinedImages = [
 
 // 画像データストアの作成
 function createImagesStore() {
+  // 画像の存在確認とログ出力
+  predefinedImages.forEach(img => {
+    console.log(`画像データ: ${img.id}`, {
+      name: img.name,
+      url: img.url,
+      thumbnail: img.thumbnail
+    });
+    
+    // 画像URLが存在するか確認
+    const imgElement = new Image();
+    imgElement.onload = () => console.log(`画像が正常に読み込まれました: ${img.url}`);
+    imgElement.onerror = () => console.error(`画像の読み込みに失敗しました: ${img.url}`);
+    imgElement.src = img.url;
+    
+    // サムネイルURLが存在するか確認
+    if (img.thumbnail) {
+      const thumbElement = new Image();
+      thumbElement.onload = () => console.log(`サムネイルが正常に読み込まれました: ${img.thumbnail}`);
+      thumbElement.onerror = () => console.error(`サムネイルの読み込みに失敗しました: ${img.thumbnail}`);
+      thumbElement.src = img.thumbnail;
+    }
+  });
+
   const { subscribe, set, update } = writable(predefinedImages);
 
   return {
@@ -54,7 +77,9 @@ function createImagesStore() {
     update,
     // 画像を検索
     findImageById: (id) => {
-      return predefinedImages.find(img => img.id === id) || predefinedImages[0];
+      const foundImage = predefinedImages.find(img => img.id === id) || predefinedImages[0];
+      console.log(`findImageById: ${id}`, foundImage);
+      return foundImage;
     }
   };
 }

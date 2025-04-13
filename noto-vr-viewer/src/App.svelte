@@ -16,6 +16,7 @@
   let isLoading = true;
   let controlsVisible = true;
   let vrModeAvailable = false;
+  let viewerComponent; // Viewerコンポーネントへの参照を追加
 
   onMount(async () => {
     // デバイス機能の検出
@@ -39,23 +40,68 @@
     }
 
     isLoading = false;
+    
+    // コンポーネントがマウントされた後に初期化ログを出力
+    console.log("App mounted", {
+      deviceCapabilities,
+      vrModeAvailable,
+      selectedImage,
+      controlMode: $settings.controlMode
+    });
   });
 
   // VRモード切り替え
   function toggleVRMode() {
+    console.log("toggleVRMode called", {
+      currentVRMode: $settings.vrEnabled,
+      viewerComponent: !!viewerComponent
+    });
+    
     settings.toggleVR();
+    
+    // VRモードが有効になった場合、Viewerコンポーネントの対応するメソッドを呼び出す
+    if ($settings.vrEnabled && viewerComponent) {
+      console.log("Calling enterVR on viewerComponent");
+      viewerComponent.enterVR();
+    } else if (!$settings.vrEnabled && viewerComponent) {
+      console.log("Calling exitVR on viewerComponent");
+      viewerComponent.exitVR();
+    }
   }
 
   // 画像選択ハンドラ
   function handleImageSelect(event) {
+    console.log("handleImageSelect called", event.detail);
     selectedImage = event.detail;
     saveLastImageId(selectedImage.id);
   }
 
   // 画面タップでコントロール表示切替
-  function toggleControls() {
+  function toggleControls(event) {
+    // コントロールパネルやイメージセレクター内のクリックは無視する
+    if (event && (
+      event.target.closest('.control-panel') ||
+      event.target.closest('.image-selector') ||
+      event.target.closest('.reset-button') ||
+      event.target.closest('.mobile-controls')
+    )) {
+      console.log("コントロール内のクリックなので無視します");
+      return;
+    }
+    
     if (!$settings.vrEnabled) {
+      console.log("Toggling controls visibility", { current: controlsVisible });
       controlsVisible = !controlsVisible;
+    }
+  }
+
+  // カメラリセット機能
+  function resetCamera() {
+    console.log("resetCamera called in App.svelte", { viewerComponent: !!viewerComponent });
+    if (viewerComponent) {
+      viewerComponent.resetCamera();
+    } else {
+      console.error("viewerComponent is not available");
     }
   }
 </script>
@@ -67,9 +113,15 @@
       <p>読み込み中...</p>
     </div>
   {:else}
-    <div class="viewer-container" on:click={toggleControls}>
+    <div
+      class="viewer-container"
+      role="button"
+      tabindex="0"
+      on:click={(e) => toggleControls(e)}
+      on:keydown={(e) => e.key === 'Enter' && toggleControls(e)}>
       {#if selectedImage}
         <Viewer
+          bind:this={viewerComponent}
           image={selectedImage}
           vrMode={$settings.vrEnabled}
           controlMode={$settings.controlMode}
@@ -156,5 +208,21 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
+  }
+
+  /* リセットボタンのスタイル */
+  .reset-button {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    cursor: pointer;
+    z-index: 100;
+    backdrop-filter: blur(5px);
   }
 </style>
