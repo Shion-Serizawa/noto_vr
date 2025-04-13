@@ -1,47 +1,81 @@
-# Svelte + Vite
+# 360度画像ビューア
 
-This template should help get you started developing with Svelte in Vite.
+A-Frameを使用した360度画像ビューアアプリケーションです。
 
-## Recommended IDE Setup
+## 機能
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+- 360度画像（全天球・パノラマ）の表示
+- 通常モードとVRモードの切り替え
+- 複数の操作方法対応
+  - デスクトップ：マウス操作
+  - スマートフォン：デバイスの向きまたはタッチ操作
+  - VRゴーグル：ヘッドトラッキング
 
-## Need an official Svelte framework?
+## 開発環境のセットアップ
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+### 必要条件
 
-## Technical considerations
+- Node.js（推奨：LTS版）
+- npm または yarn
+- Git
 
-**Why use this over SvelteKit?**
+### インストール
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+```bash
+# リポジトリをクローン
+git clone https://github.com/yourusername/360-viewer.git
+cd 360-viewer
 
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+# 依存関係のインストール
+npm install
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
-
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
-
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
-
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `checkJs` in the JS template?**
-
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+# 開発サーバーの起動
+npm run dev
 ```
+
+## 画像の追加方法
+
+1. 360度画像（equirectangular形式の全天球画像またはパノラマ画像）を用意します
+2. 画像ファイルを `public/images/` ディレクトリに配置します
+3. サムネイル画像を `public/images/thumbnails/` ディレクトリに配置します
+4. `src/stores/images.js` ファイルを開き、画像情報を追加します
+
+画像情報の例：
+```javascript
+{
+  id: 'unique-id',
+  name: '画像の名前',
+  type: 'equirectangular', // または 'panorama'
+  url: 'images/your-image.jpg',
+  thumbnail: 'images/thumbnails/your-image-thumb.jpg',
+  description: '画像の説明'
+}
+```
+
+## デプロイ
+
+### GitHub Pages（GitHub Actions使用）
+
+1. GitHubリポジトリの「Settings」→「Pages」でGitHub Pagesを有効化
+2. ソースとして「GitHub Actions」を選択
+3. mainブランチにプッシュすると自動的にデプロイされます
+
+### 手動デプロイ
+
+```bash
+# デプロイスクリプトを実行可能にする
+chmod +x deploy.sh
+
+# デプロイ実行
+./deploy.sh
+```
+
+## 技術スタック
+
+- [Svelte](https://svelte.dev/) - UIフレームワーク
+- [Vite](https://vitejs.dev/) - ビルドツール
+- [A-Frame](https://aframe.io/) - WebVRフレームワーク
+
+## ライセンス
+
+MIT

@@ -1,79 +1,61 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --primary-color: #3498db;
+  --accent-color: #2ecc71;
+  --dark-bg: #121212;
+  --light-text: #f1f1f1;
+  --ui-overlay-bg: rgba(0, 0, 0, 0.6);
+  --ui-border-radius: 8px;
+  --ui-padding: 12px;
+  --transition-speed: 0.3s;
+}
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+html, body {
+  position: fixed; /* モバイルでのスクロール防止 */
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--dark-bg);
+  color: var(--light-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-.card {
-  padding: 2em;
+  touch-action: none; /* タッチデバイスでのスクロールを防止 */
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  height: 100%;
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  background: var(--ui-overlay-bg);
+  color: var(--light-text);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--ui-border-radius);
+  padding: 8px 16px;
+  font-size: 14px;
+  transition: all var(--transition-speed) ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* A-Frameスタイル上書き */
+.a-enter-vr-button {
+  display: none !important; /* 独自のVRボタンを使用するため */
 }
