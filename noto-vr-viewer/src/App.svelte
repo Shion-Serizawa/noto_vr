@@ -1,9 +1,9 @@
 <script>
   import { onMount } from "svelte";
-  import { images } from "./stores/images";
-  import { settings } from "./stores/settings";
-  import { detectDeviceCapabilities, checkVRSupport } from "./lib/detection";
-  import { getLastImageId, saveLastImageId } from "./stores/settings";
+  import { images } from "./stores/images-store-revised";
+  import { settings } from "./stores/settings-store-revised";
+  import { detectDeviceCapabilities, checkVRSupport } from "./lib/detections";
+  import { getLastImageId, saveLastImageId } from "./stores/settings-store-revised";
 
   // コンポーネントのインポート
   import Viewer from "./components/Viewer.svelte";

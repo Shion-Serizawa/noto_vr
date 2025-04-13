@@ -1,6 +1,6 @@
 <script>
     import { createEventDispatcher } from "svelte";
-    import { requestOrientationPermission } from "../lib/detection";
+    import { requestOrientationPermission } from "../lib/detections";
 
     // プロパティ
     export let controlMode = "orientation"; // 'orientation' または 'touch'

@@ -1,4 +1,5 @@
 <script>
+    // @ts-ignore
     import { onMount, onDestroy, afterUpdate } from "svelte";
     import { createEventDispatcher } from "svelte";
 
@@ -79,9 +80,9 @@
         if (window.DeviceOrientationEvent) {
             // iOSの場合、権限リクエストが必要
             if (
-                typeof DeviceOrientationEvent.requestPermission === "function"
+                typeof DeviceOrientationEvent['requestPermission'] === "function"
             ) {
-                DeviceOrientationEvent.requestPermission()
+                DeviceOrientationEvent['requestPermission']()
                     .then((permission) => {
                         if (permission === "granted") {
                             setupOrientationListener();

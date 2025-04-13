@@ -1,5 +1,6 @@
-<script>
+<script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import { slide } from "svelte/transition";
 
     // プロパティ
     export let images = [];
@@ -34,9 +35,7 @@
         >
             {#each images as image (image.id)}
                 <div
-                    class="thumbnail-item {selected?.id === image.id
-                        ? 'selected'
-                        : ''}"
+                    class="thumbnail-item {selected && selected.id === image.id ? 'selected' : ''}"
                     on:click={() => selectImage(image)}
                     role="button"
                     tabindex="0"
