@@ -64,22 +64,10 @@
 
 <style>
     .image-selector {
-        /* 元のスタイル */
-        /* position: absolute; */
-        /* bottom: 20px; */
-        /* right: 20px; */
-        /* z-index: 100; */
-
-        /* デバッグ用スタイル: 強制的に中央表示 */
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        z-index: 9999 !important; /* 最前面に */
-        background-color: red !important; /* 目立つように赤背景 */
-        padding: 20px !important;
-        border: 2px solid yellow !important; /* 黄色い枠線 */
-
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 100;
         max-width: 300px;
         min-width: 150px;
     }
