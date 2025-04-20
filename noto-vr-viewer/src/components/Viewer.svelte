@@ -315,11 +315,10 @@
         }
     }
 
-    // VRモード終了
-    function exitVR() {
-        if (scene) {
-            scene.exitVR();
-        }
+    // VRモード終了リクエスト
+    function requestExitVR() {
+        console.log("Requesting VR exit");
+        dispatch('exitrequest');
     }
 
     // コンポーネント破棄時のクリーンアップ
@@ -376,7 +375,7 @@
 
     <!-- VRモード切替ボタン -->
     {#if vrMode}
-        <button class="exit-vr-btn" on:click={exitVR}> VRモード終了 </button>
+        <button class="exit-vr-btn" on:click={requestExitVR}> VRモード終了 </button>
     {:else if window.AFRAME && window.AFRAME.utils.device.checkHeadsetConnected()}
         <button class="enter-vr-btn" on:click={enterVR}> VRモード開始 </button>
     {/if}

@@ -125,6 +125,7 @@
           image={selectedImage}
           vrMode={$settings.vrEnabled}
           controlMode={$settings.controlMode}
+          on:exitrequest={toggleVRMode}
         />
       {/if}
 
