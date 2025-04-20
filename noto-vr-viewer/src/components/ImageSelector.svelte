@@ -150,25 +150,4 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
-    @media (max-width: 768px) {
-        .image-selector {
-            right: 50%;
-            bottom: 30px; /* 少し上に調整 */
-            transform: translateX(50%);
-            max-width: 90%;
-            min-width: auto; /* 最小幅を解除 */
-            width: auto; /* 幅を自動調整 */
-        }
-
-        .thumbnails-container {
-            max-height: 200px; /* スマホ用に高さを調整 */
-        }
-
-        /* ボタンのテキストを少し調整 */
-        .selector-toggle {
-            min-width: 120px; /* ボタンの最小幅を確保 */
-            justify-content: center; /* 中央揃え */
-        }
-    }
 </style>
