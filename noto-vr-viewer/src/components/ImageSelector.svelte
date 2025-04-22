@@ -71,6 +71,18 @@
         max-width: 300px;
         min-width: 150px;
     }
+    
+    /* スマートフォン向けの優先表示設定 */
+    :global(.is-mobile) .image-selector {
+        z-index: 200; /* より高いz-indexを設定 */
+        bottom: 30px; /* 少し上に配置して操作しやすくする */
+        right: 15px;
+    }
+    
+    :global(.is-mobile) .selector-toggle {
+        padding: 12px 18px; /* タップ領域を広げる */
+        background: rgba(0, 0, 0, 0.75); /* 背景の透明度を少し上げて視認性を向上 */
+    }
 
     .selector-toggle {
         width: 100%;
@@ -102,6 +114,12 @@
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
     }
+    
+    /* スマートフォン向けのサムネイルコンテナスタイル */
+    :global(.is-mobile) .thumbnails-container {
+        background: rgba(0, 0, 0, 0.75); /* 背景の透明度を上げて視認性を向上 */
+        max-height: 250px; /* 少し小さくして画面を占有しすぎないようにする */
+    }
 
     .thumbnail-item {
         display: flex;
@@ -109,6 +127,11 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         cursor: pointer;
         transition: background-color 0.2s;
+    }
+    
+    /* スマートフォン向けのサムネイルアイテムスタイル */
+    :global(.is-mobile) .thumbnail-item {
+        padding: 12px 10px; /* 縦方向のパディングを増やしてタップしやすくする */
     }
 
     .thumbnail-item:last-child {

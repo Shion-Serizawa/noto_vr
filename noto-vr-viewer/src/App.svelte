@@ -106,7 +106,7 @@
   }
 </script>
 
-<main class:vr-mode={$settings.vrEnabled}>
+<main class:vr-mode={$settings.vrEnabled} class:is-mobile={deviceCapabilities?.isMobile}>
   {#if isLoading}
     <div class="loading">
       <div class="spinner"></div>
