@@ -26,8 +26,9 @@
     vrModeAvailable = await checkVRSupport();
 
     // スマホでの優先コントロールモードを設定
-    if (deviceCapabilities.isMobile && deviceCapabilities.hasOrientation) {
-      settings.setControlMode("orientation");
+    if (deviceCapabilities.isMobile) {
+      settings.setControlMode(deviceCapabilities.hasOrientation ? "orientation" : "touch");
+      controlsVisible = true; // モバイルでは初期表示を確実にする
     }
 
     // 最後に表示した画像があれば選択
@@ -219,7 +220,7 @@
     overflow: hidden;
   }
 
-  /* リセットボタンのスタイル */
+  /* リセットボタンとモバイルコントロールのスタイル調整 */
   .reset-button {
     position: absolute;
     top: 20px;
@@ -231,7 +232,19 @@
     border-radius: 8px;
     padding: 10px 15px;
     cursor: pointer;
-    z-index: 100;
+    z-index: 50; /* z-indexを下げて他のコントロールと重ならないように */
     backdrop-filter: blur(5px);
+  }
+
+  /* モバイルデバイス向けの画像セレクター表示調整 */
+  :global(.image-selector) {
+    z-index: 100 !important;
+    bottom: 20px !important;
+    top: auto !important;
+  }
+
+  /* VRモードでない時のコントロール表示保証 */
+  :global(.controls-overlay):not(.vr-mode) {
+    display: block !important;
   }
 </style>

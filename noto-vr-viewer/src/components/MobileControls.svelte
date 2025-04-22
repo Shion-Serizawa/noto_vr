@@ -18,17 +18,19 @@
             !isPermissionGranted &&
             !permissionRequested
         ) {
-            requestOrientationPermission().then((granted) => {
-                isPermissionGranted = granted;
-                permissionRequested = true;
-
-                if (granted) {
-                    dispatch("change", newMode);
-                } else {
-                    // 権限がない場合はタッチモードを維持
-                    console.warn("デバイスの向き検知の権限がありません");
-                }
-            });
+          requestOrientationPermission().then((granted) => {
+            isPermissionGranted = granted;
+            permissionRequested = true;
+    
+            if (granted) {
+              dispatch("change", newMode);
+            } else {
+              // 権限がない場合はタッチモードにフォールバック
+              dispatch("change", "touch");
+              console.warn("デバイスの向き検知の権限がありません");
+            }
+          });
+          return; // 即時モード変更
         } else {
             dispatch("change", newMode);
         }
