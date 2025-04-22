@@ -74,14 +74,19 @@
     
     /* スマートフォン向けの優先表示設定 */
     :global(.is-mobile) .image-selector {
-        z-index: 200; /* より高いz-indexを設定 */
+        z-index: 1000 !important; /* 非常に高いz-indexを設定し、!importantで強制 */
         bottom: 30px; /* 少し上に配置して操作しやすくする */
         right: 15px;
+        display: block !important; /* 強制的に表示 */
+        opacity: 1 !important; /* 透明度を1に強制 */
+        visibility: visible !important; /* 可視性を強制 */
+        pointer-events: auto !important; /* ポインターイベントを有効化 */
     }
     
     :global(.is-mobile) .selector-toggle {
         padding: 12px 18px; /* タップ領域を広げる */
-        background: rgba(0, 0, 0, 0.75); /* 背景の透明度を少し上げて視認性を向上 */
+        background: rgba(0, 0, 0, 0.85); /* 背景の透明度をさらに上げて視認性を向上 */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* シャドウを追加して目立たせる */
     }
 
     .selector-toggle {
@@ -117,8 +122,11 @@
     
     /* スマートフォン向けのサムネイルコンテナスタイル */
     :global(.is-mobile) .thumbnails-container {
-        background: rgba(0, 0, 0, 0.75); /* 背景の透明度を上げて視認性を向上 */
+        background: rgba(0, 0, 0, 0.85); /* 背景の透明度を上げて視認性を向上 */
         max-height: 250px; /* 少し小さくして画面を占有しすぎないようにする */
+        z-index: 1000 !important; /* 非常に高いz-indexを設定 */
+        display: block !important; /* 強制的に表示（isOpenがtrueの場合） */
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.7); /* シャドウを追加して目立たせる */
     }
 
     .thumbnail-item {

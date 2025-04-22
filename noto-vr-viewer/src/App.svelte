@@ -90,8 +90,16 @@
     }
     
     if (!$settings.vrEnabled) {
-      console.log("Toggling controls visibility", { current: controlsVisible });
+      console.log("Toggling controls visibility", {
+        current: controlsVisible,
+        isMobile: deviceCapabilities?.isMobile
+      });
+      
+      // コントロールの表示/非表示を切り替え
       controlsVisible = !controlsVisible;
+      
+      // モバイルの場合、画像選択ハンドラは常に表示されるようにCSSで強制しているため
+      // ここでの処理は影響しない（CSSの!important宣言が優先される）
     }
   }
 
